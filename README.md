@@ -9,7 +9,9 @@ A modern Three.js gaming website featuring 14 interactive pages with stunning 3D
 
 ## 🚀 Live Demo
 
-**[View Live Site](https://sanadtalhouni97.github.io/Agent_p_1/)**
+**[🎮 View Live Site](https://sanadtalhouni97.github.io/Agent_p_1/)** ✨
+
+*Experience the immersive 3D gaming universe with stunning visualizations and interactive elements!*
 
 ## ✨ Key Features
 
@@ -41,6 +43,15 @@ A modern Three.js gaming website featuring 14 interactive pages with stunning 3D
 - Touch-friendly interactions
 - Optimized performance for mobile devices
 - Smooth scrolling and animations
+- Cross-platform compatibility
+
+## 🌐 Browser Support
+
+- **Chrome** (recommended) - Full WebGL support
+- **Firefox** - Excellent compatibility
+- **Safari** - Good performance
+- **Edge** - Modern browser support
+- **Mobile browsers** - iOS Safari, Chrome Mobile
 
 ## 🚀 Quick Start
 
@@ -68,10 +79,19 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📞 Support
 
-- **Repository**: [https://github.com/sanadtalhouni97/Agent_p_1](https://github.com/sanadtalhouni97/Agent_p_1)
-- **Issues**: [https://github.com/sanadtalhouni97/Agent_p_1/issues](https://github.com/sanadtalhouni97/Agent_p_1/issues)
+- **🌐 Live Site**: [https://sanadtalhouni97.github.io/Agent_p_1/](https://sanadtalhouni97.github.io/Agent_p_1/)
+- **📁 Repository**: [https://github.com/sanadtalhouni97/Agent_p_1](https://github.com/sanadtalhouni97/Agent_p_1)
+- **🐛 Issues**: [https://github.com/sanadtalhouni97/Agent_p_1/issues](https://github.com/sanadtalhouni97/Agent_p_1/issues)
 
 ---
+
+## 🎯 Project Status
+
+✅ **Live Demo**: [https://sanadtalhouni97.github.io/Agent_p_1/](https://sanadtalhouni97.github.io/Agent_p_1/)  
+✅ **GitHub Pages**: Successfully deployed  
+✅ **Responsive Design**: Mobile & desktop optimized  
+✅ **3D Visualizations**: Interactive Three.js scenes  
+✅ **Modern Tech Stack**: Three.js, GSAP, Vite, ES6+  
 
 ⭐ **Star this repository if you found it helpful!**
 

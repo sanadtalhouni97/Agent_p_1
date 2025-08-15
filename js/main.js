@@ -27,34 +27,62 @@ class GamingUniverse {
         
         // Handle page changes
         this.handlePageChange();
+        
+        // Fallback: if loading takes too long, force start
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen && loadingScreen.style.display !== 'none') {
+                console.log('Loading timeout - forcing start');
+                loadingScreen.style.display = 'none';
+                this.startHomeAnimation();
+            }
+        }, 5000); // 5 second timeout
     }
 
     setupThreeJS() {
-        // Create scene
-        this.scene = new THREE.Scene();
-        
-        // Create camera
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.camera.position.z = 5;
-        
-        // Create renderer
-        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setClearColor(0x000000, 0);
-        
-        // Add renderer to DOM
-        const container = document.querySelector('.three-container');
-        if (container) {
-            container.appendChild(this.renderer.domElement);
+        try {
+            // Create scene
+            this.scene = new THREE.Scene();
+            
+            // Create camera
+            this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            this.camera.position.z = 5;
+            
+            // Create renderer
+            this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.renderer.setClearColor(0x000000, 0);
+            
+            // Add renderer to DOM
+            const container = document.querySelector('.three-container');
+            if (container) {
+                container.appendChild(this.renderer.domElement);
+            } else {
+                console.error('Three.js container not found');
+            }
+            
+            // Handle window resize
+            window.addEventListener('resize', () => this.onWindowResize());
+            
+            // Add ambient light
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+            this.scene.add(ambientLight);
+            
+        } catch (error) {
+            console.error('Error setting up Three.js:', error);
         }
-        
-        // Handle window resize
-        window.addEventListener('resize', () => this.onWindowResize());
     }
 
     showLoadingScreen() {
         const loadingScreen = document.getElementById('loading-screen');
         const loadingProgress = document.querySelector('.loading-progress');
+        
+        // Add error handling
+        if (!loadingScreen || !loadingProgress) {
+            console.error('Loading screen elements not found');
+            this.startHomeAnimation();
+            return;
+        }
         
         // Simulate loading progress
         let progress = 0;
@@ -62,20 +90,26 @@ class GamingUniverse {
             progress += Math.random() * 15;
             if (progress > 100) progress = 100;
             
-            loadingProgress.style.width = progress + '%';
+            if (loadingProgress) {
+                loadingProgress.style.width = progress + '%';
+            }
             
             if (progress >= 100) {
                 clearInterval(interval);
                 
                 // Hide loading screen with animation
-                gsap.to(loadingScreen, {
-                    opacity: 0,
-                    duration: 0.5,
-                    onComplete: () => {
-                        loadingScreen.style.display = 'none';
-                        this.startHomeAnimation();
-                    }
-                });
+                if (loadingScreen) {
+                    gsap.to(loadingScreen, {
+                        opacity: 0,
+                        duration: 0.5,
+                        onComplete: () => {
+                            loadingScreen.style.display = 'none';
+                            this.startHomeAnimation();
+                        }
+                    });
+                } else {
+                    this.startHomeAnimation();
+                }
             }
         }, 100);
     }

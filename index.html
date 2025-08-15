@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming Universe - ThreeJS Experience</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">GAMING UNIVERSE</div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <div class="loading-text">Loading Gaming Experience...</div>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">GAMING UNIVERSE</div>
+            <ul class="nav-menu">
+                <li><a href="/" class="nav-link active">Home</a></li>
+                <li><a href="/dota2" class="nav-link">Dota 2</a></li>
+                <li><a href="/csgo2" class="nav-link">CS:GO 2</a></li>
+                <li><a href="/valorant" class="nav-link">Valorant</a></li>
+                <li><a href="/league" class="nav-link">League of Legends</a></li>
+                <li><a href="/fortnite" class="nav-link">Fortnite</a></li>
+                <li><a href="/overwatch" class="nav-link">Overwatch 2</a></li>
+                <li><a href="/pubg" class="nav-link">PUBG</a></li>
+                <li><a href="/news" class="nav-link">News</a></li>
+                <li><a href="/tournaments" class="nav-link">Tournaments</a></li>
+                <li><a href="/streams" class="nav-link">Streams</a></li>
+                <li><a href="/merchandise" class="nav-link">Merch</a></li>
+                <li><a href="/about" class="nav-link">About</a></li>
+                <li><a href="/contacts" class="nav-link">Contacts</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main-content">
+        <!-- Home Page -->
+        <section id="home" class="page active">
+            <div class="three-container">
+                <canvas id="home-canvas"></canvas>
+            </div>
+            <div class="content-overlay">
+                <div class="hero-content">
+                    <h1 class="hero-title">Welcome to the Gaming Universe</h1>
+                    <p class="hero-subtitle">Experience the world of competitive gaming through immersive 3D visuals</p>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">500M+</span>
+                            <span class="stat-label">Gamers Worldwide</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">$200B+</span>
+                            <span class="stat-label">Gaming Industry</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">24/7</span>
+                            <span class="stat-label">Gaming Action</span>
+                        </div>
+                    </div>
+                    <div class="hero-buttons">
+                        <button class="btn-primary">Explore Games</button>
+                        <button class="btn-secondary">Watch Highlights</button>
+                        <button class="btn-tertiary">Join Community</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dota 2 Page -->
+        <section id="dota2" class="page">
+            <div class="three-container">
+                <canvas id="dota2-canvas"></canvas>
+            </div>
+            <div class="content-overlay">
+                <div class="game-content">
+                    <h2>Dota 2</h2>
+                    <div class="game-info">
+                        <div class="game-stats">
+                            <div class="stat">
+                                <span class="stat-number">10M+</span>
+                                <span class="stat-label">Active Players</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">$40M+</span>
+                                <span class="stat-label">Prize Pool</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">120+</span>
+                                <span class="stat-label">Heroes</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">200+</span>
+                                <span class="stat-label">Items</span>
+                            </div>
+                        </div>
+                        <div class="game-description">
+                            <p>Dota 2 is a multiplayer online battle arena (MOBA) video game developed and published by Valve. The game is a sequel to Defense of the Ancients (DotA), which was a community-created mod for Blizzard Entertainment's Warcraft III: Reign of Chaos.</p>
+                            <div class="game-features">
+                                <h3>Key Features</h3>
+                                <ul>
+                                    <li>Strategic team-based gameplay</li>
+                                    <li>Complex hero abilities and combinations</li>
+                                    <li>Dynamic item builds and meta</li>
+                                    <li>Professional esports scene</li>
+                                </ul>
+                            </div>
+                            <div class="heroes-showcase">
+                                <h3>Popular Heroes</h3>
+                                <div class="heroes-grid">
+                                    <div class="hero-card">
+                                        <div class="hero-icon">🔥</div>
+                                        <div class="hero-name">Invoker</div>
+                                        <div class="hero-role">Mage</div>
+                                    </div>
+                                    <div class="hero-card">
+                                        <div class="hero-icon">⚔️</div>
+                                        <div class="hero-name">Juggernaut</div>
+                                        <div class="hero-role">Carry</div>
+                                    </div>
+                                    <div class="hero-card">
+                                        <div class="hero-icon">🪝</div>
+                                        <div class="hero-name">Pudge</div>
+                                        <div class="hero-role">Support</div>
+                                    </div>
+                                    <div class="hero-card">
+                                        <div class="hero-icon">❄️</div>
+                                        <div class="hero-name">Crystal Maiden</div>
+                                        <div class="hero-role">Support</div>
+                                    </div>
+                                    <div class="hero-card">
+                                        <div class="hero-icon">🌙</div>
+                                        <div class="hero-name">Luna</div>
+                                        <div class="hero-role">Carry</div>
+                                    </div>
+                                    <div class="hero-card">
+                                        <div class="hero-icon">⚡</div>
+                                        <div class="hero-name">Storm Spirit</div>
+                                        <div class="hero-role">Mage</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CS:GO 2 Page -->
+        <section id="csgo2" class="page">
+            <div class="three-container">
+                <canvas id="csgo2-canvas"></canvas>
+            </div>
+            <div class="content-overlay">
+                <div class="game-content">
+                    <h2>Counter-Strike 2</h2>
+                    <div class="game-info">
+                        <div class="game-stats">
+                            <div class="stat">
+                                <span class="stat-number">1.2M+</span>
+                                <span class="stat-label">Peak Players</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">$2M+</span>
+                                <span class="stat-label">Major Prize Pool</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">20+</span>
+                                <span class="stat-label">Maps</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">30+</span>
+                                <span class="stat-label">Weapons</span>
+                            </div>
+                        </div>
+                        <div class="game-description">
+                            <p>Counter-Strike 2 is a tactical first-person shooter game developed by Valve. It's the successor to Counter-Strike: Global Offensive and features improved graphics, new gameplay mechanics, and enhanced competitive features.</p>
+                            <div class="game-features">
+                                <h3>Key Features</h3>
+                                <ul>
+                                    <li>Precise tactical gameplay</li>
+                                    <li>Team coordination and strategy</li>
+                                    <li>Weapon economy management</li>
+                                    <li>Professional competitive scene</li>
+                                </ul>
+                            </div>
+                            <div class="weapons-showcase">
+                                <h3>Signature Weapons</h3>
+                                <div class="weapons-grid">
+                                    <div class="weapon-card">
+                                        <div class="weapon-icon">🔫</div>
+                                        <div class="weapon-name">AK-47</div>
+                                        <div class="weapon-type">Rifle</div>
+                                    </div>
+                                    <div class="weapon-card">
+                                        <div class="weapon-icon">🔫</div>
+                                        <div class="weapon-name">M4A4</div>
+                                        <div class="weapon-type">Rifle</div>
+                                    </div>
+                                    <div class="weapon-card">
+                                        <div class="weapon-icon">🎯</div>
+                                        <div class="weapon-name">AWP</div>
+                                        <div class="weapon-type">Sniper</div>
+                                    </div>
+                                    <div class="weapon-card">
+                                        <div class="weapon-icon">🔫</div>
+                                        <div class="weapon-name">Desert Eagle</div>
+                                        <div class="weapon-type">Pistol</div>
+                                    </div>
+                                    <div class="weapon-card">
+                                        <div class="weapon-icon">🔫</div>
+                                        <div class="weapon-name">USP-S</div>
+                                        <div class="weapon-type">Pistol</div>
+                                    </div>
+                                    <div class="weapon-card">
+                                        <div class="weapon-icon">🔫</div>
+                                        <div class="weapon-name">Glock-18</div>
+                                        <div class="weapon-type">Pistol</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Valorant Page -->
+        <section id="valorant" class="page">
+            <div class="three-container">
+                <canvas id="valorant-canvas"></canvas>
+            </div>
+            <div class="content-overlay">
+                <div class="game-content">
+                    <h2>Valorant</h2>
+                    <div class="game-info">
+                        <div class="game-stats">
+                            <div class="stat">
+                                <span class="stat-number">15M+</span>
+                                <span class="stat-label">Monthly Players</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">$1M+</span>
+                                <span class="stat-label">Championship Prize</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">20+</span>
+                                <span class="stat-label">Agents</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">8+</span>
+                                <span class="stat-label">Maps</span>
+                            </div>
+                        </div>
+                        <div class="game-description">
+                            <p>Valorant is a tactical first-person hero shooter developed and published by Riot Games. The game features unique agents with special abilities, combining precise gunplay with strategic team-based gameplay.</p>
+                            <div class="game-features">
+                                <h3>Key Features</h3>
+                                <ul>
+                                    <li>Unique agent abilities</li>
+                                    <li>Precise gunplay mechanics</li>
+                                    <li>Strategic team coordination</li>
+                                    <li>Regular content updates</li>
+                                </ul>
+                            </div>
+                            <div class="agents-showcase">
+                                <h3>Popular Agents</h3>
+                                <div class="agents-grid">
+                                    <div class="agent-card">
+                                        <div class="agent-icon">💨</div>
+                                        <div class="agent-name">Jett</div>
+                                        <div class="agent-role">Duelist</div>
+                                    </div>
+                                    <div class="agent-card">
+                                        <div class="agent-icon">🔥</div>
+                                        <div class="agent-name">Phoenix</div>
+                                        <div class="agent-role">Duelist</div>
+                                    </div>
+                                    <div class="agent-card">
+                                        <div class="agent-icon">💎</div>
+                                        <div class="agent-name">Sage</div>
+                                        <div class="agent-role">Sentinel</div>
+                                    </div>
+                                    <div class="agent-card">
+                                        <div class="agent-icon">👻</div>
+                                        <div class="agent-name">Omen</div>
+                                        <div class="agent-role">Controller</div>
+                                    </div>
+                                    <div class="agent-card">
+                                        <div class="agent-icon">🎭</div>
+                                        <div class="agent-name">Reyna</div>
+                                        <div class="agent-role">Duelist</div>
+                                    </div>
+                                    <div class="agent-card">
+                                        <div class="agent-icon">🕷️</div>
+                                        <div class="agent-name">Cypher</div>
+                                        <div class="agent-role">Sentinel</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- League of Legends Page -->
+        <section id="league" class="page">
+            <div class="three-container">
+                <canvas id="league-canvas"></canvas>
+            </div>
+            <div class="content-overlay">
+                <div class="game-content">
+                    <h2>League of Legends</h2>
+                    <div class="game-info">
+                        <div class="game-stats">
+                            <div class="stat">
+                                <span class="stat-number">150M+</span>
+                                <span class="stat-label">Registered Players</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">$2.2M+</span>
+                                <span class="stat-label">Worlds Prize Pool</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">160+</span>
+                                <span class="stat-label">Champions</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">5</span>
+                                <span class="stat-label">Roles</span>
+                            </div>
+                        </div>
+                        <div class="game-description">
+                            <p>League of Legends is a multiplayer online battle arena game developed and published by Riot Games. It's one of the most popular esports titles globally, featuring strategic gameplay with unique champions and abilities.</p>
+                            <div class="game-features">
+                                <h3>Key Features</h3>
+                                <ul>
+                                    <li>Diverse champion roster</li>
+                                    <li>Strategic team composition</li>
+                                    <li>Dynamic meta evolution</li>
+                                    <li>Global competitive scene</li>
+                                </ul>
+                            </div>
+                            <div class="champions-showcase">
+                                <h3>Iconic Champions</h3>
+                                <div class="champions-grid">
+                                    <div class="champion-card">
+                                        <div class="champion-icon">🗡️</div>
+                                        <div class="champion-name">Yasuo</div>
+                                        <div class="champion-role">Assassin</div>
+                                    </div>
+                                    <div class="champion-card">
+                                        <div class="champion-icon">✨</div>
+                                        <div class="champion-name">Lux</div>
+                                        <div class="champion-role">Mage</div>
+                                    </div>
+                                    <div class="champion-card">
+                                        <div class="champion-icon">⛓️</div>
+                                        <div class="champion-name">Thresh</div>
+                                        <div class="champion-role">Support</div>
+                                    </div>
+                                    <div class="champion-card">
+                                        <div class="champion-icon">👁️</div>
+                                        <div class="champion-name">Lee Sin</div>
+                                        <div class="champion-role">Fighter</div>
+                                    </div>
+                                    <div class="champion-card">
+                                        <div class="champion-icon">🦊</div>
+                                        <div class="champion-name">Ahri</div>
+                                        <div class="champion-role">Mage</div>
+                                    </div>
+                                    <div class="champion-card">
+                                        <div class="champion-icon">⚔️</div>
+                                        <div class="champion-name">Darius</div>
+                                        <div class="champion-role">Fighter</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fortnite Page -->
+        <section id="fortnite" class="page">
+            <div class="three-container">
+                <canvas id="fortnite-canvas"></canvas>
+            </div>
+            <div class="content-overlay">
+                <div class="game-content">
+                    <h2>Fortnite</h2>
+                    <div class="game-info">
+                        <div class="game-stats">
+                            <div class="stat">
+                                <span class="stat-number">350M+</span>
+                                <span class="stat-label">Registered Players</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">$30M+</span>
+                                <span class="stat-label">World Cup Prize</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">100+</span>
+                                <span class="stat-label">Skins</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">25+</span>
+                                <span class="stat-label">Weapons</span>
+                            </div>
+                        </div>
+                        <div class="game-description">
+                            <p>Fortnite is a battle royale game developed by Epic Games. Players compete to be the last one standing while building structures and collecting weapons in a constantly shrinking play area.</p>
+                            <div class="game-features">
+                                <h3>Key Features</h3>
+                                <ul>
+                                    <li>Building mechanics</li>
+                                    <li>Battle royale gameplay</li>
+                                    <li>Regular seasonal updates</li>
+                                    <li>Cross-platform play</li>
+                                </ul>
+                            </div>
+                            <div class="fortnite-showcase">
+                                <h3>Popular Items</h3>
+                                <div class="fortnite-grid">
+                                    <div class="fortnite-card">
+                                        <div class="fortnite-icon">🏗️</div>
+                                        <div class="fortnite-name">Building</div>
+                                        <div class="fortnite-type">Mechanic</div>
+                                    </div>
+                                    <div class="fortnite-card">
+                                        <div class="fortnite-icon">🎯</div>
+                                        <div class="fortnite-name">Sniper Rifle</div>
+                                        <div class="fortnite-type">Weapon</div>
+                                    </div>
+                                    <div class="fortnite-card">
+                                        <div class="fortnite-icon">🛡️</div>
+                                        <div class="fortnite-name">Shield Potion</div>
+                                        <div class="fortnite-type">Consumable</div>
+                                    </div>
+                                    <div class="fortnite-card">
+                                        <div class="fortnite-icon">💣</div>
+                                        <div class="fortnite-name">Grenades</div>
+                                        <div class="fortnite-type">Explosive</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Overwatch 2 Page -->
+        <section id="overwatch" class="page">
+            <div class="three-container">
+                <canvas id="overwatch-canvas"></canvas>
+            </div>
+            <div class="content-overlay">
+                <div class="game-content">
+                    <h2>Overwatch 2</h2>
+                    <div class="game-info">
+                        <div class="game-stats">
+                            <div class="stat">
+                                <span class="stat-number">25M+</span>
+                                <span class="stat-label">Active Players</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">$4M+</span>
+                                <span class="stat-label">League Prize Pool</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">35+</span>
+                                <span class="stat-label">Heroes</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">4</span>
+                                <span class="stat-label">Roles</span>
+                            </div>
+                        </div>
+                        <div class="game-description">
+                            <p>Overwatch 2 is a team-based first-person shooter game developed by Blizzard Entertainment. It features diverse heroes with unique abilities and emphasizes teamwork and strategy.</p>
+                            <div class="game-features">
+                                <h3>Key Features</h3>
+                                <ul>
+                                    <li>Diverse hero roster</li>
+                                    <li>Team-based objectives</li>
+                                    <li>Unique hero abilities</li>
+                                    <li>Competitive ranked play</li>
+                                </ul>
+                            </div>
+                            <div class="overwatch-showcase">
+                                <h3>Popular Heroes</h3>
+                                <div class="overwatch-grid">
+                                    <div class="overwatch-card">
+                                        <div class="overwatch-icon">🛡️</div>
+                                        <div class="overwatch-name">Reinhardt</div>
+                                        <div class="overwatch-role">Tank</div>
+                                    </div>
+                                    <div class="overwatch-card">
+                                        <div class="overwatch-icon">💉</div>
+                                        <div class="overwatch-name">Mercy</div>
+                                        <div class="overwatch-role">Support</div>
+                                    </div>
+                                    <div class="overwatch-card">
+                                        <div class="overwatch-icon">🎯</div>
+                                        <div class="overwatch-name">Widowmaker</div>
+                                        <div class="overwatch-role">Damage</div>
+                                    </div>
+                                    <div class="overwatch-card">
+                                        <div class="overwatch-icon">⚡</div>
+                                        <div class="overwatch-name">Tracer</div>
+                                        <div class="overwatch-role">Damage</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PUBG Page -->
+        <section id="pubg" class="page">
+            <div class="three-container">
+                <canvas id="pubg-canvas"></canvas>
+            </div>
+            <div class="content-overlay">
+                <div class="game-content">
+                    <h2>PUBG: Battlegrounds</h2>
+                    <div class="game-info">
+                        <div class="game-stats">
+                            <div class="stat">
+                                <span class="stat-number">75M+</span>
+                                <span class="stat-label">Total Players</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">$2M+</span>
+                                <span class="stat-label">Global Championship</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">8+</span>
+                                <span class="stat-label">Maps</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number">40+</span>
+                                <span class="stat-label">Weapons</span>
+                            </div>
+                        </div>
+                        <div class="game-description">
+                            <p>PUBG: Battlegrounds is a battle royale game where 100 players parachute onto an island and fight to be the last one standing. Players must scavenge for weapons and equipment while avoiding the shrinking play zone.</p>
+                            <div class="game-features">
+                                <h3>Key Features</h3>
+                                <ul>
+                                    <li>Realistic gunplay</li>
+                                    <li>Large-scale battles</li>
+                                    <li>Multiple maps</li>
+                                    <li>Vehicle combat</li>
+                                </ul>
+                            </div>
+                            <div class="pubg-showcase">
+                                <h3>Popular Weapons</h3>
+                                <div class="pubg-grid">
+                                    <div class="pubg-card">
+                                        <div class="pubg-icon">🔫</div>
+                                        <div class="pubg-name">M416</div>
+                                        <div class="pubg-type">Assault Rifle</div>
+                                    </div>
+                                    <div class="pubg-card">
+                                        <div class="pubg-icon">🎯</div>
+                                        <div class="pubg-name">Kar98k</div>
+                                        <div class="pubg-type">Sniper</div>
+                                    </div>
+                                    <div class="pubg-card">
+                                        <div class="pubg-icon">🔫</div>
+                                        <div class="pubg-name">UMP45</div>
+                                        <div class="pubg-type">SMG</div>
+                                    </div>
+                                    <div class="pubg-card">
+                                        <div class="pubg-icon">🔫</div>
+                                        <div class="pubg-name">S12K</div>
+                                        <div class="pubg-type">Shotgun</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- News Page -->
+        <section id="news" class="page">
+            <div class="three-container">
+                <canvas id="news-canvas"></canvas>
+            </div>
+            <div class="content-overlay">
+                <div class="page-content">
+                    <h2>Gaming News</h2>
+                    <div class="news-grid">
+                        <article class="news-card">
+                            <div class="news-image">📰</div>
+                            <div class="news-content">
+                                <h3>Dota 2 International 2024 Announced</h3>
+                                <p>The biggest Dota 2 tournament of the year will take place in Seattle with a $40M+ prize pool.</p>
+                                <span class="news-date">March 15, 2024</span>
+                            </div>
+                        </article>
+                        <article class="news-card">
+                            <div class="news-image">🎮</div>
+                            <div class="news-content">
+                                <h3>CS:GO 2 Major Update Released</h3>
+                                <p>Valve releases major update with new maps, weapons, and improved graphics engine.</p>
+                                <span class="news-date">March 12, 2024</span>
+                            </div>
+                        </article>
+                        <article class="news-card">
+                            <div class="news-image">🏆</div>
+                            <div class="news-content">
+                                <h3>Valorant Champions Tour 2024</h3>
+                                <p>Riot Games announces the 2024 VCT season with expanded regional leagues.</p>
+                                <span class="news-date">March 10, 2024</span>
+                            </div>
+                        </article>
+                        <article class="news-card">
+                            <div class="news-image">🌟</div>
+                            <div class="news-content">
+                                <h3>League of Legends Worlds 2024</h3>
+                                <p>Worlds 2024 will be held in multiple cities across Europe with new format.</p>
+                                <span class="news-date">March 8, 2024</span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tournaments Page -->
+        <section id="tournaments" class="page">
+            <div class="three-container">
+                <canvas id="tournaments-canvas"></canvas>
+            </div>
+            <div class="content-overlay">
+                <div class="page-content">
+                    <h2>Tournaments</h2>
+                    <div class="tournaments-grid">
+                        <div class="tournament-card">
+                            <div class="tournament-icon">🏆</div>
+                            <h3>The International 2024</h3>
+                            <p>Dota 2's biggest tournament</p>
+                            <div class="tournament-details">
+                                <span class="prize-pool">$40M+ Prize Pool</span>
+                                <span class="date">August 2024</span>
+                            </div>
+                        </div>
+                        <div class="tournament-card">
+                            <div class="tournament-icon">🎯</div>
+                            <h3>CS:GO 2 Major</h3>
+                            <p>Counter-Strike's premier event</p>
+                            <div class="tournament-details">
+                                <span class="prize-pool">$2M+ Prize Pool</span>
+                                <span class="date">May 2024</span>
+                            </div>
+                        </div>
+                        <div class="tournament-card">
+                            <div class="tournament-icon">⚡</div>
+                            <h3>Valorant Champions</h3>
+                            <p>VCT Season Finals</p>
+                            <div class="tournament-details">
+                                <span class="prize-pool">$1M+ Prize Pool</span>
+                                <span class="date">December 2024</span>
+                            </div>
+                        </div>
+                        <div class="tournament-card">
+                            <div class="tournament-icon">🌍</div>
+                            <h3>League Worlds 2024</h3>
+                            <p>LoL World Championship</p>
+                            <div class="tournament-details">
+                                <span class="prize-pool">$2.2M+ Prize Pool</span>
+                                <span class="date">October 2024</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Streams Page -->
+        <section id="streams" class="page">
+            <div class="three-container">
+                <canvas id="streams-canvas"></canvas>
+            </div>
+            <div class="content-overlay">
+                <div class="page-content">
+                    <h2>Live Streams</h2>
+                    <div class="streams-grid">
+                        <div class="stream-card">
+                            <div class="stream-thumbnail">🎥</div>
+                            <div class="stream-info">
+                                <h3>Dota 2 Pro League</h3>
+                                <p>Team Liquid vs OG</p>
+                                <span class="viewers">15.2K viewers</span>
+                            </div>
+                        </div>
+                        <div class="stream-card">
+                            <div class="stream-thumbnail">🎮</div>
+                            <div class="stream-info">
+                                <h3>CS:GO 2 Major Qualifiers</h3>
+                                <p>NAVI vs FaZe Clan</p>
+                                <span class="viewers">23.7K viewers</span>
+                            </div>
+                        </div>
+                        <div class="stream-card">
+                            <div class="stream-thumbnail">⚡</div>
+                            <div class="stream-info">
+                                <h3>Valorant Champions Tour</h3>
+                                <p>Sentinels vs 100 Thieves</p>
+                                <span class="viewers">18.9K viewers</span>
+                            </div>
+                        </div>
+                        <div class="stream-card">
+                            <div class="stream-thumbnail">🌍</div>
+                            <div class="stream-info">
+                                <h3>League of Legends LCS</h3>
+                                <p>Cloud9 vs TSM</p>
+                                <span class="viewers">12.4K viewers</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Merchandise Page -->
+        <section id="merchandise" class="page">
+            <div class="three-container">
+                <canvas id="merchandise-canvas"></canvas>
+            </div>
+            <div class="content-overlay">
+                <div class="page-content">
+                    <h2>Gaming Merchandise</h2>
+                    <div class="merchandise-grid">
+                        <div class="merch-card">
+                            <div class="merch-image">👕</div>
+                            <h3>Gaming Universe T-Shirt</h3>
+                            <p>Premium cotton gaming apparel</p>
+                            <span class="price">$29.99</span>
+                        </div>
+                        <div class="merch-card">
+                            <div class="merch-image">🎮</div>
+                            <h3>Gaming Mouse Pad</h3>
+                            <p>Large RGB gaming mouse pad</p>
+                            <span class="price">$19.99</span>
+                        </div>
+                        <div class="merch-card">
+                            <div class="merch-image">🎧</div>
+                            <h3>Gaming Headset</h3>
+                            <p>7.1 Surround sound headset</p>
+                            <span class="price">$89.99</span>
+                        </div>
+                        <div class="merch-card">
+                            <div class="merch-image">⌨️</div>
+                            <h3>Mechanical Keyboard</h3>
+                            <p>RGB mechanical gaming keyboard</p>
+                            <span class="price">$149.99</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Page -->
+        <section id="about" class="page">
+            <div class="three-container">
+                <canvas id="about-canvas"></canvas>
+            </div>
+            <div class="content-overlay">
+                <div class="about-content">
+                    <h2>About Gaming Universe</h2>
+                    <div class="about-info">
+                        <div class="about-text">
+                            <p>Gaming Universe is an immersive Three.js experience that celebrates the world of competitive gaming. Our platform showcases the most popular esports titles with stunning 3D visualizations and interactive elements.</p>
+                            <p>From the strategic depths of Dota 2 to the tactical precision of CS:GO 2, we bring the excitement of competitive gaming to life through cutting-edge web technologies.</p>
+                        </div>
+                        <div class="tech-stack">
+                            <h3>Technologies Used</h3>
+                            <div class="tech-grid">
+                                <div class="tech-item">Three.js</div>
+                                <div class="tech-item">WebGL</div>
+                                <div class="tech-item">GSAP</div>
+                                <div class="tech-item">Vite</div>
+                                <div class="tech-item">CSS3</div>
+                                <div class="tech-item">ES6+</div>
+                            </div>
+                        </div>
+                        <div class="contact-info">
+                            <h3>Connect With Us</h3>
+                            <div class="social-links">
+                                <a href="#" class="social-link">Twitter</a>
+                                <a href="#" class="social-link">Discord</a>
+                                <a href="#" class="social-link">GitHub</a>
+                                <a href="#" class="social-link">YouTube</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contacts Page -->
+        <section id="contacts" class="page">
+            <div class="three-container">
+                <canvas id="contacts-canvas"></canvas>
+            </div>
+            <div class="content-overlay">
+                <div class="page-content">
+                    <h2>Contact Us</h2>
+                    <div class="contact-grid">
+                        <div class="contact-info-card">
+                            <h3>Get in Touch</h3>
+                            <div class="contact-item">
+                                <span class="contact-icon">📧</span>
+                                <span class="contact-text">info@gaminguniverse.com</span>
+                            </div>
+                            <div class="contact-item">
+                                <span class="contact-icon">📞</span>
+                                <span class="contact-text">+1 (555) 123-4567</span>
+                            </div>
+                            <div class="contact-item">
+                                <span class="contact-icon">📍</span>
+                                <span class="contact-text">123 Gaming Street, Digital City</span>
+                            </div>
+                        </div>
+                        <div class="contact-form">
+                            <h3>Send us a Message</h3>
+                            <form>
+                                <input type="text" placeholder="Your Name" required>
+                                <input type="email" placeholder="Your Email" required>
+                                <textarea placeholder="Your Message" rows="5" required></textarea>
+                                <button type="submit" class="btn-primary">Send Message</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

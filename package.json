@@ -39,12 +39,12 @@
   ],
   "author": "Gaming Universe Team",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/sanad-t/threejs-site.git"
-  },
-  "homepage": "https://sanad-t.github.io/threejs-site/",
-  "bugs": {
-    "url": "https://github.com/sanad-t/threejs-site/issues"
-  }
+          "repository": {
+          "type": "git",
+          "url": "https://github.com/sanadtalhouni97/Agent_p_1.git"
+        },
+        "homepage": "https://sanadtalhouni97.github.io/Agent_p_1/",
+        "bugs": {
+          "url": "https://github.com/sanadtalhouni97/Agent_p_1/issues"
+        }
 }

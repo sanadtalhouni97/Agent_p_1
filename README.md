@@ -9,7 +9,7 @@ A modern Three.js gaming website featuring 14 interactive pages with stunning 3D
 
 ## 🚀 Live Demo
 
-**[View Live Site](https://sanad-t.github.io/threejs-site/)**
+**[View Live Site](https://sanadtalhouni97.github.io/Agent_p_1/)**
 
 ## ✨ Key Features
 
@@ -46,7 +46,7 @@ A modern Three.js gaming website featuring 14 interactive pages with stunning 3D
 
 ```bash
 # Clone the repository
-git clone https://github.com/sanadtalhouni97/threejs-site.git
+git clone https://github.com/sanadtalhouni97/Agent_p_1.git
 
 # Install dependencies
 npm install
@@ -68,8 +68,8 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📞 Support
 
-- **Repository**: [https://github.com/sanadtalhouni97/threejs-site](https://github.com/sanadtalhouni97/threejs-site)
-- **Issues**: [https://github.com/sanadtalhouni97/threejs-site/issues](https://github.com/sanadtalhouni97/threejs-site/issues)
+- **Repository**: [https://github.com/sanadtalhouni97/Agent_p_1](https://github.com/sanadtalhouni97/Agent_p_1)
+- **Issues**: [https://github.com/sanadtalhouni97/Agent_p_1/issues](https://github.com/sanadtalhouni97/Agent_p_1/issues)
 
 ---
 

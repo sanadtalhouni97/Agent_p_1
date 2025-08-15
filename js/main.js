@@ -2,239 +2,305 @@ import * as THREE from 'three';
 import { gsap } from 'gsap';
 import Router from './router.js';
 
-// Global variables
-let currentScene = null;
-let currentRenderer = null;
-let currentCamera = null;
-let currentControls = null;
-let animationId = null;
-
-// Initialize the application
 class GamingUniverse {
     constructor() {
-        this.router = new Router();
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.animationId = null;
         this.currentPage = 'home';
-        this.scenes = {};
-        this.renderers = {};
-        this.cameras = {};
-        this.controls = {};
+        
+        // Initialize router
+        this.router = new Router();
         
         this.init();
+        this.setupEventListeners();
+        this.setupMobileNavigation();
     }
 
     init() {
-        this.setupEventListeners();
-        this.hideLoadingScreen();
-        this.initializeScenes();
+        // Initialize Three.js scene
+        this.setupThreeJS();
         
-        // Listen for page changes from router
+        // Show loading screen
+        this.showLoadingScreen();
+        
+        // Handle page changes
+        this.handlePageChange();
+    }
+
+    setupThreeJS() {
+        // Create scene
+        this.scene = new THREE.Scene();
+        
+        // Create camera
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.camera.position.z = 5;
+        
+        // Create renderer
+        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setClearColor(0x000000, 0);
+        
+        // Add renderer to DOM
+        const container = document.querySelector('.three-container');
+        if (container) {
+            container.appendChild(this.renderer.domElement);
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', () => this.onWindowResize());
+    }
+
+    showLoadingScreen() {
+        const loadingScreen = document.getElementById('loading-screen');
+        const loadingProgress = document.querySelector('.loading-progress');
+        
+        // Simulate loading progress
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress > 100) progress = 100;
+            
+            loadingProgress.style.width = progress + '%';
+            
+            if (progress >= 100) {
+                clearInterval(interval);
+                
+                // Hide loading screen with animation
+                gsap.to(loadingScreen, {
+                    opacity: 0,
+                    duration: 0.5,
+                    onComplete: () => {
+                        loadingScreen.style.display = 'none';
+                        this.startHomeAnimation();
+                    }
+                });
+            }
+        }, 100);
+    }
+
+    setupEventListeners() {
+        // Navigation links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = link.getAttribute('href');
+                if (href && href !== '#') {
+                    this.router.navigate(href);
+                }
+            });
+        });
+
+        // Hero buttons
+        document.querySelectorAll('.btn-primary, .btn-secondary, .btn-tertiary').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const href = btn.getAttribute('href');
+                if (href && href !== '#') {
+                    e.preventDefault();
+                    this.router.navigate(href);
+                }
+            });
+        });
+
+        // Card interactions
+        this.setupCardInteractions();
+
+        // Handle page change events
         window.addEventListener('pageChange', (e) => {
             this.handlePageChange(e.detail.page);
         });
     }
 
-    setupEventListeners() {
-        // Navigation - use router
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const path = link.getAttribute('href');
-                this.router.navigate(path);
-            });
-        });
-
-        // Mobile menu
+    setupMobileNavigation() {
         const hamburger = document.querySelector('.hamburger');
         const navMenu = document.querySelector('.nav-menu');
         
-        hamburger.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-        });
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+                
+                // Prevent body scroll when menu is open
+                if (navMenu.classList.contains('active')) {
+                    document.body.classList.add('menu-open');
+                } else {
+                    document.body.classList.remove('menu-open');
+                }
+            });
 
-        // Window resize
-        window.addEventListener('resize', () => {
-            this.onWindowResize();
-        });
+            // Close menu when clicking on a link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                });
+            });
 
-        // Button interactions
-        const exploreBtn = document.querySelector('.btn-primary');
-        const highlightsBtn = document.querySelector('.btn-secondary');
-        const communityBtn = document.querySelector('.btn-tertiary');
-        
-        if (exploreBtn) {
-            exploreBtn.addEventListener('click', () => {
-                this.router.navigate('/dota2');
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (navMenu.classList.contains('active') && 
+                    !hamburger.contains(e.target) && 
+                    !navMenu.contains(e.target)) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                }
+            });
+
+            // Close menu on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && navMenu.classList.contains('active')) {
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                }
+            });
+
+            // Prevent menu from closing when clicking inside it
+            navMenu.addEventListener('click', (e) => {
+                e.stopPropagation();
             });
         }
-        
-        if (highlightsBtn) {
-            highlightsBtn.addEventListener('click', () => {
-                this.router.navigate('/csgo2');
-            });
-        }
-
-        if (communityBtn) {
-            communityBtn.addEventListener('click', () => {
-                this.router.navigate('/valorant');
-            });
-        }
-
-        // Add hover effects to cards
-        this.setupCardInteractions();
-    }
-
-    handlePageChange(pageName) {
-        // Stop current animation
-        if (animationId) {
-            cancelAnimationFrame(animationId);
-        }
-        
-        // Start new scene animation
-        if (this.scenes[pageName]) {
-            this.scenes[pageName].animate();
-        }
-        
-        this.currentPage = pageName;
     }
 
     setupCardInteractions() {
-        const cards = document.querySelectorAll('.hero-card, .weapon-card, .agent-card, .champion-card, .fortnite-card, .overwatch-card, .pubg-card, .news-card, .tournament-card, .stream-card, .merch-card');
-        
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                gsap.to(card, {
-                    scale: 1.05,
-                    duration: 0.3,
-                    ease: "power2.out"
+        // Add hover effects to all cards
+        const cardSelectors = [
+            '.hero-card', '.weapon-card', '.agent-card', '.champion-card',
+            '.fortnite-card', '.overwatch-card', '.pubg-card',
+            '.news-card', '.tournament-card', '.stream-card', '.merch-card'
+        ];
+
+        cardSelectors.forEach(selector => {
+            document.querySelectorAll(selector).forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    gsap.to(card, {
+                        scale: 1.02,
+                        duration: 0.3,
+                        ease: 'power2.out'
+                    });
                 });
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                gsap.to(card, {
-                    scale: 1,
-                    duration: 0.3,
-                    ease: "power2.out"
+
+                card.addEventListener('mouseleave', () => {
+                    gsap.to(card, {
+                        scale: 1,
+                        duration: 0.3,
+                        ease: 'power2.out'
+                    });
                 });
             });
         });
     }
 
-    hideLoadingScreen() {
-        setTimeout(() => {
-            const loadingScreen = document.getElementById('loading-screen');
-            gsap.to(loadingScreen, {
-                opacity: 0,
-                duration: 1,
-                onComplete: () => {
-                    loadingScreen.style.display = 'none';
-                }
-            });
-        }, 2000);
-    }
+    handlePageChange(page = 'home') {
+        // Stop current animation
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+        }
 
-    initializeScenes() {
-        this.createHomeScene();
-        this.createDota2Scene();
-        this.createCSGO2Scene();
-        this.createValorantScene();
-        this.createLeagueScene();
-        this.createFortniteScene();
-        this.createOverwatchScene();
-        this.createPUBGScene();
-        this.createNewsScene();
-        this.createTournamentsScene();
-        this.createStreamsScene();
-        this.createMerchandiseScene();
-        this.createAboutScene();
-        this.createContactsScene();
+        // Clear scene
+        while(this.scene.children.length > 0) {
+            this.scene.remove(this.scene.children[0]);
+        }
+
+        // Create new scene based on page
+        switch(page) {
+            case 'home':
+                this.createHomeScene();
+                break;
+            case 'dota2':
+                this.createDota2Scene();
+                break;
+            case 'csgo2':
+                this.createCSGO2Scene();
+                break;
+            case 'valorant':
+                this.createValorantScene();
+                break;
+            case 'league':
+                this.createLeagueScene();
+                break;
+            case 'fortnite':
+                this.createFortniteScene();
+                break;
+            case 'overwatch':
+                this.createOverwatchScene();
+                break;
+            case 'pubg':
+                this.createPUBGScene();
+                break;
+            case 'news':
+                this.createNewsScene();
+                break;
+            case 'tournaments':
+                this.createTournamentsScene();
+                break;
+            case 'streams':
+                this.createStreamsScene();
+                break;
+            case 'merchandise':
+                this.createMerchandiseScene();
+                break;
+            case 'contacts':
+                this.createContactsScene();
+                break;
+            case 'about':
+                this.createAboutScene();
+                break;
+            default:
+                this.createHomeScene();
+        }
+
+        this.currentPage = page;
+        this.animate();
     }
 
     createHomeScene() {
-        const canvas = document.getElementById('home-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        // Create multiple floating spheres with different colors
+        const colors = [0x4a90e2, 0x7b68ee, 0xff6b6b, 0x50c878, 0xffd700];
         
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x000000, 0);
-        
-        // Create floating gaming icons with different shapes
-        const geometries = [
-            new THREE.SphereGeometry(1, 32, 32),
-            new THREE.BoxGeometry(1.5, 1.5, 1.5),
-            new THREE.TorusGeometry(0.8, 0.3, 16, 32),
-            new THREE.OctahedronGeometry(1)
-        ];
-        
-        const materials = [
-            new THREE.MeshPhongMaterial({ color: 0x4a90e2, transparent: true, opacity: 0.8 }),
-            new THREE.MeshPhongMaterial({ color: 0x7b68ee, transparent: true, opacity: 0.8 }),
-            new THREE.MeshPhongMaterial({ color: 0xff6b6b, transparent: true, opacity: 0.8 }),
-            new THREE.MeshPhongMaterial({ color: 0x50c878, transparent: true, opacity: 0.8 })
-        ];
-        
-        const meshes = [];
-        for (let i = 0; i < 25; i++) {
-            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-            const material = materials[Math.floor(Math.random() * materials.length)];
-            const mesh = new THREE.Mesh(geometry, material);
-            
-            mesh.position.set(
-                (Math.random() - 0.5) * 30,
-                (Math.random() - 0.5) * 30,
-                (Math.random() - 0.5) * 30
-            );
-            mesh.scale.setScalar(Math.random() * 0.5 + 0.5);
-            scene.add(mesh);
-            meshes.push(mesh);
-        }
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-        scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0x4a90e2, 1);
-        directionalLight.position.set(10, 10, 5);
-        scene.add(directionalLight);
-        
-        camera.position.z = 20;
-        
-        // Animation
-        const animate = () => {
-            meshes.forEach((mesh, index) => {
-                mesh.rotation.x += 0.01;
-                mesh.rotation.y += 0.01;
-                mesh.position.y += Math.sin(Date.now() * 0.001 + index) * 0.02;
-                mesh.position.x += Math.cos(Date.now() * 0.001 + index) * 0.01;
+        for (let i = 0; i < 15; i++) {
+            const geometry = new THREE.SphereGeometry(Math.random() * 0.5 + 0.2, 32, 32);
+            const material = new THREE.MeshBasicMaterial({ 
+                color: colors[Math.floor(Math.random() * colors.length)],
+                transparent: true,
+                opacity: 0.7
             });
+            const sphere = new THREE.Mesh(geometry, material);
             
-            renderer.render(scene, camera);
-            animationId = requestAnimationFrame(animate);
-        };
-        
-        this.scenes.home = { scene, camera, renderer, animate, meshes };
+            sphere.position.set(
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 10
+            );
+            
+            sphere.userData = {
+                speed: Math.random() * 0.02 + 0.01,
+                rotationSpeed: Math.random() * 0.02 + 0.01
+            };
+            
+            this.scene.add(sphere);
+        }
+
+        // Add ambient light
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        this.scene.add(ambientLight);
     }
 
     createDota2Scene() {
-        const canvas = document.getElementById('dota2-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x1a1a2e);
-        
-        // Create Dota 2 themed scene with magical effects
+        // Create red-themed particle system
+        const particleCount = 200;
         const particles = new THREE.BufferGeometry();
-        const particleCount = 1500;
         const positions = new Float32Array(particleCount * 3);
         const colors = new Float32Array(particleCount * 3);
         
         for (let i = 0; i < particleCount * 3; i += 3) {
-            positions[i] = (Math.random() - 0.5) * 60;
-            positions[i + 1] = (Math.random() - 0.5) * 60;
-            positions[i + 2] = (Math.random() - 0.5) * 60;
+            positions[i] = (Math.random() - 0.5) * 20;
+            positions[i + 1] = (Math.random() - 0.5) * 20;
+            positions[i + 2] = (Math.random() - 0.5) * 20;
             
             colors[i] = Math.random() * 0.5 + 0.5; // Red
             colors[i + 1] = Math.random() * 0.3; // Green
@@ -245,878 +311,519 @@ class GamingUniverse {
         particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
         
         const particleMaterial = new THREE.PointsMaterial({
-            size: 0.15,
+            size: 0.1,
             vertexColors: true,
             transparent: true,
             opacity: 0.8
         });
         
         const particleSystem = new THREE.Points(particles, particleMaterial);
-        scene.add(particleSystem);
-        
+        this.scene.add(particleSystem);
+
         // Add magical orbs
-        const orbGeometry = new THREE.SphereGeometry(2, 16, 16);
-        const orbMaterial = new THREE.MeshPhongMaterial({
-            color: 0xff6b6b,
-            transparent: true,
-            opacity: 0.6
-        });
-        
-        const orbs = [];
-        for (let i = 0; i < 5; i++) {
-            const orb = new THREE.Mesh(orbGeometry, orbMaterial);
-            orb.position.set(
-                Math.cos(i * Math.PI * 2 / 5) * 15,
-                Math.sin(i * Math.PI * 2 / 5) * 15,
-                0
-            );
-            scene.add(orb);
-            orbs.push(orb);
-        }
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
-        scene.add(ambientLight);
-        
-        const pointLight = new THREE.PointLight(0xff6b6b, 1, 100);
-        pointLight.position.set(10, 10, 10);
-        scene.add(pointLight);
-        
-        camera.position.z = 25;
-        
-        // Animation
-        const animate = () => {
-            particleSystem.rotation.y += 0.005;
-            particleSystem.rotation.x += 0.002;
-            
-            orbs.forEach((orb, index) => {
-                orb.rotation.x += 0.02;
-                orb.rotation.y += 0.02;
-                orb.position.y += Math.sin(Date.now() * 0.001 + index) * 0.05;
+        for (let i = 0; i < 8; i++) {
+            const geometry = new THREE.SphereGeometry(0.3, 16, 16);
+            const material = new THREE.MeshBasicMaterial({
+                color: 0xff4444,
+                transparent: true,
+                opacity: 0.6
             });
+            const orb = new THREE.Mesh(geometry, material);
             
-            renderer.render(scene, camera);
-            animationId = requestAnimationFrame(animate);
-        };
-        
-        this.scenes.dota2 = { scene, camera, renderer, animate, particleSystem, orbs };
+            orb.position.set(
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 10
+            );
+            
+            orb.userData = {
+                speed: Math.random() * 0.01 + 0.005,
+                rotationSpeed: Math.random() * 0.02 + 0.01
+            };
+            
+            this.scene.add(orb);
+        }
     }
 
     createCSGO2Scene() {
-        const canvas = document.getElementById('csgo2-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x2d2d2d);
-        
-        // Create CS:GO themed scene with tactical elements
-        const geometries = [
-            new THREE.BoxGeometry(2, 2, 2),
-            new THREE.SphereGeometry(1, 16, 16),
-            new THREE.ConeGeometry(1, 2, 8),
-            new THREE.TorusGeometry(1, 0.3, 8, 16),
-            new THREE.CylinderGeometry(0.5, 0.5, 3, 8)
+        // Create geometric shapes representing tactical gameplay
+        const shapes = [
+            new THREE.BoxGeometry(1, 1, 1),
+            new THREE.ConeGeometry(0.5, 1, 8),
+            new THREE.CylinderGeometry(0.3, 0.3, 1, 8),
+            new THREE.OctahedronGeometry(0.5)
         ];
         
-        const materials = [
-            new THREE.MeshPhongMaterial({ color: 0x8b4513 }), // Brown
-            new THREE.MeshPhongMaterial({ color: 0x696969 }), // Gray
-            new THREE.MeshPhongMaterial({ color: 0x2f4f4f }), // Dark slate
-            new THREE.MeshPhongMaterial({ color: 0x556b2f }), // Dark olive
-            new THREE.MeshPhongMaterial({ color: 0x654321 })  // Dark brown
-        ];
+        const colors = [0x4a90e2, 0x2c3e50, 0x34495e, 0x7f8c8d];
         
-        const meshes = [];
-        for (let i = 0; i < 20; i++) {
-            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-            const material = materials[Math.floor(Math.random() * materials.length)];
-            const mesh = new THREE.Mesh(geometry, material);
+        for (let i = 0; i < 12; i++) {
+            const geometry = shapes[Math.floor(Math.random() * shapes.length)];
+            const material = new THREE.MeshBasicMaterial({
+                color: colors[Math.floor(Math.random() * colors.length)],
+                wireframe: true,
+                transparent: true,
+                opacity: 0.7
+            });
+            const shape = new THREE.Mesh(geometry, material);
             
-            mesh.position.set(
-                (Math.random() - 0.5) * 40,
-                (Math.random() - 0.5) * 40,
-                (Math.random() - 0.5) * 40
+            shape.position.set(
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 10
             );
             
-            mesh.rotation.set(
+            shape.rotation.set(
                 Math.random() * Math.PI,
                 Math.random() * Math.PI,
                 Math.random() * Math.PI
             );
             
-            scene.add(mesh);
-            meshes.push(mesh);
-        }
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-        scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(10, 10, 5);
-        scene.add(directionalLight);
-        
-        camera.position.z = 30;
-        
-        // Animation
-        const animate = () => {
-            meshes.forEach((mesh, index) => {
-                mesh.rotation.x += 0.01;
-                mesh.rotation.y += 0.01;
-                mesh.position.y += Math.sin(Date.now() * 0.001 + index) * 0.03;
-                mesh.position.x += Math.cos(Date.now() * 0.001 + index) * 0.01;
-            });
+            shape.userData = {
+                rotationSpeed: {
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.5) * 0.02,
+                    z: (Math.random() - 0.5) * 0.02
+                }
+            };
             
-            renderer.render(scene, camera);
-            animationId = requestAnimationFrame(animate);
-        };
-        
-        this.scenes.csgo2 = { scene, camera, renderer, animate, meshes };
+            this.scene.add(shape);
+        }
     }
 
     createValorantScene() {
-        const canvas = document.getElementById('valorant-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x1a1a1a);
-        
-        // Create Valorant themed scene with neon effects
-        const geometry = new THREE.PlaneGeometry(25, 25, 25, 25);
-        const material = new THREE.MeshPhongMaterial({
-            color: 0xff4655,
+        // Create neon wireframe effects
+        const wireframeGeometry = new THREE.SphereGeometry(3, 32, 32);
+        const wireframeMaterial = new THREE.MeshBasicMaterial({
+            color: 0x00ff88,
             wireframe: true,
             transparent: true,
-            opacity: 0.4
+            opacity: 0.3
         });
-        
-        const plane = new THREE.Mesh(geometry, material);
-        scene.add(plane);
-        
-        // Add neon particles
-        const particleGeometry = new THREE.BufferGeometry();
-        const particleCount = 800;
+        const wireframeSphere = new THREE.Mesh(wireframeGeometry, wireframeMaterial);
+        this.scene.add(wireframeSphere);
+
+        // Add particle system
+        const particleCount = 150;
+        const particles = new THREE.BufferGeometry();
         const positions = new Float32Array(particleCount * 3);
         
         for (let i = 0; i < particleCount * 3; i += 3) {
-            positions[i] = (Math.random() - 0.5) * 50;
-            positions[i + 1] = (Math.random() - 0.5) * 50;
-            positions[i + 2] = (Math.random() - 0.5) * 50;
+            positions[i] = (Math.random() - 0.5) * 15;
+            positions[i + 1] = (Math.random() - 0.5) * 15;
+            positions[i + 2] = (Math.random() - 0.5) * 15;
         }
         
-        particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         
         const particleMaterial = new THREE.PointsMaterial({
-            size: 0.08,
-            color: 0x0f1419,
+            size: 0.05,
+            color: 0x00ff88,
             transparent: true,
-            opacity: 0.9
+            opacity: 0.8
         });
         
-        const particles = new THREE.Points(particleGeometry, particleMaterial);
-        scene.add(particles);
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
-        scene.add(ambientLight);
-        
-        const pointLight = new THREE.PointLight(0xff4655, 1, 60);
-        pointLight.position.set(0, 15, 15);
-        scene.add(pointLight);
-        
-        camera.position.z = 35;
-        
-        // Animation
-        const animate = () => {
-            plane.rotation.x += 0.008;
-            plane.rotation.y += 0.008;
-            particles.rotation.y += 0.015;
-            particles.rotation.x += 0.005;
+        const particleSystem = new THREE.Points(particles, particleMaterial);
+        this.scene.add(particleSystem);
+
+        // Add floating cubes
+        for (let i = 0; i < 6; i++) {
+            const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+            const material = new THREE.MeshBasicMaterial({
+                color: 0x00ff88,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.6
+            });
+            const cube = new THREE.Mesh(geometry, material);
             
-            renderer.render(scene, camera);
-            animationId = requestAnimationFrame(animate);
-        };
-        
-        this.scenes.valorant = { scene, camera, renderer, animate, plane, particles };
+            cube.position.set(
+                (Math.random() - 0.5) * 12,
+                (Math.random() - 0.5) * 12,
+                (Math.random() - 0.5) * 8
+            );
+            
+            cube.userData = {
+                rotationSpeed: {
+                    x: (Math.random() - 0.5) * 0.03,
+                    y: (Math.random() - 0.5) * 0.03,
+                    z: (Math.random() - 0.5) * 0.03
+                }
+            };
+            
+            this.scene.add(cube);
+        }
     }
 
     createLeagueScene() {
-        const canvas = document.getElementById('league-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x0a1428);
-        
-        // Create League themed scene with magical effects
-        const torusGeometry = new THREE.TorusGeometry(6, 1.5, 16, 100);
-        const torusMaterial = new THREE.MeshPhongMaterial({
-            color: 0xc89b3c,
+        // Create magical torus
+        const torusGeometry = new THREE.TorusGeometry(2, 0.5, 16, 100);
+        const torusMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffd700,
+            wireframe: true,
             transparent: true,
-            opacity: 0.8
+            opacity: 0.6
         });
-        
         const torus = new THREE.Mesh(torusGeometry, torusMaterial);
-        scene.add(torus);
-        
+        this.scene.add(torus);
+
         // Add floating orbs
-        const orbGeometry = new THREE.SphereGeometry(0.8, 16, 16);
-        const orbMaterial = new THREE.MeshPhongMaterial({
-            color: 0xc89b3c,
-            transparent: true,
-            opacity: 0.9
-        });
-        
-        const orbs = [];
-        for (let i = 0; i < 12; i++) {
-            const orb = new THREE.Mesh(orbGeometry, orbMaterial);
-            const angle = (i / 12) * Math.PI * 2;
-            const radius = 10;
+        for (let i = 0; i < 10; i++) {
+            const geometry = new THREE.SphereGeometry(0.2, 16, 16);
+            const material = new THREE.MeshBasicMaterial({
+                color: 0xffd700,
+                transparent: true,
+                opacity: 0.7
+            });
+            const orb = new THREE.Mesh(geometry, material);
             
             orb.position.set(
-                Math.cos(angle) * radius,
-                Math.sin(angle) * radius,
-                0
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 5
             );
             
-            scene.add(orb);
-            orbs.push({ mesh: orb, angle, radius });
+            orb.userData = {
+                speed: Math.random() * 0.01 + 0.005,
+                rotationSpeed: Math.random() * 0.02 + 0.01
+            };
+            
+            this.scene.add(orb);
         }
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
-        scene.add(ambientLight);
-        
-        const pointLight = new THREE.PointLight(0xc89b3c, 1, 60);
-        pointLight.position.set(0, 0, 15);
-        scene.add(pointLight);
-        
-        camera.position.z = 25;
-        
-        // Animation
-        const animate = () => {
-            torus.rotation.x += 0.015;
-            torus.rotation.y += 0.015;
-            
-            orbs.forEach((orb, index) => {
-                orb.angle += 0.025;
-                orb.mesh.position.x = Math.cos(orb.angle) * orb.radius;
-                orb.mesh.position.y = Math.sin(orb.angle) * orb.radius;
-                orb.mesh.rotation.x += 0.02;
-                orb.mesh.rotation.y += 0.02;
-            });
-            
-            renderer.render(scene, camera);
-            animationId = requestAnimationFrame(animate);
-        };
-        
-        this.scenes.league = { scene, camera, renderer, animate, torus, orbs };
     }
 
     createFortniteScene() {
-        const canvas = document.getElementById('fortnite-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        // Create colorful battle royale scene
+        const colors = [0xff6b6b, 0x4ecdc4, 0x45b7d1, 0x96ceb4, 0xfeca57];
         
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x87ceeb);
-        
-        // Create Fortnite themed scene with colorful elements
-        const geometries = [
-            new THREE.BoxGeometry(3, 3, 3),
-            new THREE.SphereGeometry(2, 16, 16),
-            new THREE.ConeGeometry(2, 4, 8),
-            new THREE.CylinderGeometry(1, 1, 4, 8)
-        ];
-        
-        const materials = [
-            new THREE.MeshPhongMaterial({ color: 0xff6b9d }), // Pink
-            new THREE.MeshPhongMaterial({ color: 0x4ecdc4 }), // Turquoise
-            new THREE.MeshPhongMaterial({ color: 0x45b7d1 }), // Blue
-            new THREE.MeshPhongMaterial({ color: 0x96ceb4 }), // Green
-            new THREE.MeshPhongMaterial({ color: 0xfeca57 })  // Yellow
-        ];
-        
-        const meshes = [];
-        for (let i = 0; i < 18; i++) {
-            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-            const material = materials[Math.floor(Math.random() * materials.length)];
-            const mesh = new THREE.Mesh(geometry, material);
-            
-            mesh.position.set(
-                (Math.random() - 0.5) * 35,
-                (Math.random() - 0.5) * 35,
-                (Math.random() - 0.5) * 35
-            );
-            
-            mesh.rotation.set(
-                Math.random() * Math.PI,
-                Math.random() * Math.PI,
-                Math.random() * Math.PI
-            );
-            
-            scene.add(mesh);
-            meshes.push(mesh);
-        }
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.7);
-        scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
-        directionalLight.position.set(10, 10, 5);
-        scene.add(directionalLight);
-        
-        camera.position.z = 30;
-        
-        // Animation
-        const animate = () => {
-            meshes.forEach((mesh, index) => {
-                mesh.rotation.x += 0.015;
-                mesh.rotation.y += 0.015;
-                mesh.position.y += Math.sin(Date.now() * 0.001 + index) * 0.04;
-                mesh.position.x += Math.cos(Date.now() * 0.001 + index) * 0.02;
+        for (let i = 0; i < 20; i++) {
+            const geometry = new THREE.SphereGeometry(Math.random() * 0.8 + 0.2, 16, 16);
+            const material = new THREE.MeshBasicMaterial({
+                color: colors[Math.floor(Math.random() * colors.length)],
+                transparent: true,
+                opacity: 0.6
             });
+            const sphere = new THREE.Mesh(geometry, material);
             
-            renderer.render(scene, camera);
-            animationId = requestAnimationFrame(animate);
-        };
-        
-        this.scenes.fortnite = { scene, camera, renderer, animate, meshes };
+            sphere.position.set(
+                (Math.random() - 0.5) * 25,
+                (Math.random() - 0.5) * 25,
+                (Math.random() - 0.5) * 15
+            );
+            
+            sphere.userData = {
+                speed: Math.random() * 0.015 + 0.005,
+                rotationSpeed: Math.random() * 0.02 + 0.01
+            };
+            
+            this.scene.add(sphere);
+        }
     }
 
     createOverwatchScene() {
-        const canvas = document.getElementById('overwatch-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x2c3e50);
-        
-        // Create Overwatch themed scene with futuristic elements
-        const geometries = [
-            new THREE.OctahedronGeometry(2),
-            new THREE.TetrahedronGeometry(2),
-            new THREE.IcosahedronGeometry(1.5),
-            new THREE.DodecahedronGeometry(1.5)
+        // Create futuristic polygonal elements
+        const shapes = [
+            new THREE.OctahedronGeometry(0.5),
+            new THREE.TetrahedronGeometry(0.4),
+            new THREE.IcosahedronGeometry(0.3)
         ];
         
-        const materials = [
-            new THREE.MeshPhongMaterial({ color: 0xe74c3c }), // Red
-            new THREE.MeshPhongMaterial({ color: 0x3498db }), // Blue
-            new THREE.MeshPhongMaterial({ color: 0x2ecc71 }), // Green
-            new THREE.MeshPhongMaterial({ color: 0xf39c12 }), // Orange
-            new THREE.MeshPhongMaterial({ color: 0x9b59b6 })  // Purple
-        ];
+        const colors = [0x4a90e2, 0xff6b6b, 0x50c878, 0xffd700];
         
-        const meshes = [];
         for (let i = 0; i < 15; i++) {
-            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-            const material = materials[Math.floor(Math.random() * materials.length)];
-            const mesh = new THREE.Mesh(geometry, material);
-            
-            mesh.position.set(
-                (Math.random() - 0.5) * 30,
-                (Math.random() - 0.5) * 30,
-                (Math.random() - 0.5) * 30
-            );
-            
-            mesh.rotation.set(
-                Math.random() * Math.PI,
-                Math.random() * Math.PI,
-                Math.random() * Math.PI
-            );
-            
-            scene.add(mesh);
-            meshes.push(mesh);
-        }
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
-        scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(10, 10, 5);
-        scene.add(directionalLight);
-        
-        camera.position.z = 25;
-        
-        // Animation
-        const animate = () => {
-            meshes.forEach((mesh, index) => {
-                mesh.rotation.x += 0.02;
-                mesh.rotation.y += 0.02;
-                mesh.position.y += Math.sin(Date.now() * 0.001 + index) * 0.03;
-                mesh.position.x += Math.cos(Date.now() * 0.001 + index) * 0.015;
+            const geometry = shapes[Math.floor(Math.random() * shapes.length)];
+            const material = new THREE.MeshBasicMaterial({
+                color: colors[Math.floor(Math.random() * colors.length)],
+                wireframe: true,
+                transparent: true,
+                opacity: 0.7
             });
+            const shape = new THREE.Mesh(geometry, material);
             
-            renderer.render(scene, camera);
-            animationId = requestAnimationFrame(animate);
-        };
-        
-        this.scenes.overwatch = { scene, camera, renderer, animate, meshes };
+            shape.position.set(
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 10
+            );
+            
+            shape.userData = {
+                rotationSpeed: {
+                    x: (Math.random() - 0.5) * 0.03,
+                    y: (Math.random() - 0.5) * 0.03,
+                    z: (Math.random() - 0.5) * 0.03
+                }
+            };
+            
+            this.scene.add(shape);
+        }
     }
 
     createPUBGScene() {
-        const canvas = document.getElementById('pubg-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        // Create military-themed battle royale
+        const colors = [0x8b4513, 0x228b22, 0x2f4f4f, 0x696969];
         
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x2d5016);
-        
-        // Create PUBG themed scene with military elements
-        const geometries = [
-            new THREE.BoxGeometry(2.5, 2.5, 2.5),
-            new THREE.SphereGeometry(1.5, 16, 16),
-            new THREE.ConeGeometry(1.5, 3, 8),
-            new THREE.CylinderGeometry(1, 1, 3, 8)
-        ];
-        
-        const materials = [
-            new THREE.MeshPhongMaterial({ color: 0x8b4513 }), // Brown
-            new THREE.MeshPhongMaterial({ color: 0x556b2f }), // Dark olive
-            new THREE.MeshPhongMaterial({ color: 0x654321 }), // Dark brown
-            new THREE.MeshPhongMaterial({ color: 0x696969 }), // Gray
-            new THREE.MeshPhongMaterial({ color: 0x2f4f4f })  // Dark slate
-        ];
-        
-        const meshes = [];
-        for (let i = 0; i < 22; i++) {
-            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-            const material = materials[Math.floor(Math.random() * materials.length)];
-            const mesh = new THREE.Mesh(geometry, material);
+        for (let i = 0; i < 18; i++) {
+            const geometry = new THREE.BoxGeometry(
+                Math.random() * 1 + 0.5,
+                Math.random() * 1 + 0.5,
+                Math.random() * 1 + 0.5
+            );
+            const material = new THREE.MeshBasicMaterial({
+                color: colors[Math.floor(Math.random() * colors.length)],
+                transparent: true,
+                opacity: 0.6
+            });
+            const box = new THREE.Mesh(geometry, material);
             
-            mesh.position.set(
-                (Math.random() - 0.5) * 40,
-                (Math.random() - 0.5) * 40,
-                (Math.random() - 0.5) * 40
+            box.position.set(
+                (Math.random() - 0.5) * 22,
+                (Math.random() - 0.5) * 22,
+                (Math.random() - 0.5) * 12
             );
             
-            mesh.rotation.set(
+            box.rotation.set(
                 Math.random() * Math.PI,
                 Math.random() * Math.PI,
                 Math.random() * Math.PI
             );
             
-            scene.add(mesh);
-            meshes.push(mesh);
-        }
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-        scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
-        directionalLight.position.set(10, 10, 5);
-        scene.add(directionalLight);
-        
-        camera.position.z = 35;
-        
-        // Animation
-        const animate = () => {
-            meshes.forEach((mesh, index) => {
-                mesh.rotation.x += 0.012;
-                mesh.rotation.y += 0.012;
-                mesh.position.y += Math.sin(Date.now() * 0.001 + index) * 0.025;
-                mesh.position.x += Math.cos(Date.now() * 0.001 + index) * 0.012;
-            });
+            box.userData = {
+                rotationSpeed: {
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.5) * 0.02,
+                    z: (Math.random() - 0.5) * 0.02
+                }
+            };
             
-            renderer.render(scene, camera);
-            animationId = requestAnimationFrame(animate);
-        };
-        
-        this.scenes.pubg = { scene, camera, renderer, animate, meshes };
-    }
-
-    createAboutScene() {
-        const canvas = document.getElementById('about-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x0a0a0a);
-        
-        // Create tech-themed scene
-        const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-        const cubeMaterial = new THREE.MeshPhongMaterial({
-            color: 0x4a90e2,
-            transparent: true,
-            opacity: 0.8
-        });
-        
-        const cubes = [];
-        for (let i = 0; i < 60; i++) {
-            const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-            cube.position.set(
-                (Math.random() - 0.5) * 50,
-                (Math.random() - 0.5) * 50,
-                (Math.random() - 0.5) * 50
-            );
-            cube.scale.setScalar(Math.random() * 0.5 + 0.5);
-            scene.add(cube);
-            cubes.push(cube);
+            this.scene.add(box);
         }
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-        scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0x4a90e2, 0.8);
-        directionalLight.position.set(10, 10, 5);
-        scene.add(directionalLight);
-        
-        camera.position.z = 30;
-        
-        // Animation
-        const animate = () => {
-            cubes.forEach((cube, index) => {
-                cube.rotation.x += 0.015;
-                cube.rotation.y += 0.015;
-                cube.position.y += Math.sin(Date.now() * 0.001 + index) * 0.015;
-                cube.position.x += Math.cos(Date.now() * 0.001 + index) * 0.008;
-            });
-            
-            renderer.render(scene, camera);
-            animationId = requestAnimationFrame(animate);
-        };
-        
-        this.scenes.about = { scene, camera, renderer, animate, cubes };
     }
 
     createNewsScene() {
-        const canvas = document.getElementById('news-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        // Create news-themed scene with floating elements
+        const colors = [0x4a90e2, 0x7b68ee, 0xff6b6b, 0x50c878];
         
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x1a1a2e);
-        
-        // Create news-themed scene with floating newspapers
-        const geometries = [
-            new THREE.PlaneGeometry(3, 2),
-            new THREE.BoxGeometry(2, 2, 0.1)
-        ];
-        
-        const materials = [
-            new THREE.MeshPhongMaterial({ color: 0x4a90e2, transparent: true, opacity: 0.8 }),
-            new THREE.MeshPhongMaterial({ color: 0x7b68ee, transparent: true, opacity: 0.8 })
-        ];
-        
-        const meshes = [];
         for (let i = 0; i < 12; i++) {
-            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-            const material = materials[Math.floor(Math.random() * materials.length)];
-            const mesh = new THREE.Mesh(geometry, material);
+            const geometry = new THREE.SphereGeometry(Math.random() * 0.6 + 0.3, 16, 16);
+            const material = new THREE.MeshBasicMaterial({
+                color: colors[Math.floor(Math.random() * colors.length)],
+                transparent: true,
+                opacity: 0.5
+            });
+            const sphere = new THREE.Mesh(geometry, material);
             
-            mesh.position.set(
-                (Math.random() - 0.5) * 30,
-                (Math.random() - 0.5) * 30,
-                (Math.random() - 0.5) * 30
+            sphere.position.set(
+                (Math.random() - 0.5) * 18,
+                (Math.random() - 0.5) * 18,
+                (Math.random() - 0.5) * 8
             );
             
-            mesh.rotation.set(
+            sphere.userData = {
+                speed: Math.random() * 0.01 + 0.005,
+                rotationSpeed: Math.random() * 0.015 + 0.005
+            };
+            
+            this.scene.add(sphere);
+        }
+    }
+
+    createTournamentsScene() {
+        // Create tournament-themed scene with golden elements
+        for (let i = 0; i < 10; i++) {
+            const geometry = new THREE.SphereGeometry(Math.random() * 0.8 + 0.4, 16, 16);
+            const material = new THREE.MeshBasicMaterial({
+                color: 0xffd700,
+                transparent: true,
+                opacity: 0.6
+            });
+            const sphere = new THREE.Mesh(geometry, material);
+            
+            sphere.position.set(
+                (Math.random() - 0.5) * 16,
+                (Math.random() - 0.5) * 16,
+                (Math.random() - 0.5) * 8
+            );
+            
+            sphere.userData = {
+                speed: Math.random() * 0.008 + 0.003,
+                rotationSpeed: Math.random() * 0.01 + 0.005
+            };
+            
+            this.scene.add(sphere);
+        }
+    }
+
+    createStreamsScene() {
+        // Create streaming-themed scene with red elements
+        const colors = [0xff4655, 0xff6b6b, 0xff4757, 0xff3838];
+        
+        for (let i = 0; i < 14; i++) {
+            const geometry = new THREE.SphereGeometry(Math.random() * 0.7 + 0.3, 16, 16);
+            const material = new THREE.MeshBasicMaterial({
+                color: colors[Math.floor(Math.random() * colors.length)],
+                transparent: true,
+                opacity: 0.6
+            });
+            const sphere = new THREE.Mesh(geometry, material);
+            
+            sphere.position.set(
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 10
+            );
+            
+            sphere.userData = {
+                speed: Math.random() * 0.012 + 0.006,
+                rotationSpeed: Math.random() * 0.018 + 0.008
+            };
+            
+            this.scene.add(sphere);
+        }
+    }
+
+    createMerchandiseScene() {
+        // Create merchandise-themed scene with orange elements
+        const colors = [0xe74c3c, 0xff6b6b, 0xff7f50, 0xff6347];
+        
+        for (let i = 0; i < 16; i++) {
+            const geometry = new THREE.BoxGeometry(
+                Math.random() * 0.8 + 0.4,
+                Math.random() * 0.8 + 0.4,
+                Math.random() * 0.8 + 0.4
+            );
+            const material = new THREE.MeshBasicMaterial({
+                color: colors[Math.floor(Math.random() * colors.length)],
+                transparent: true,
+                opacity: 0.5
+            });
+            const box = new THREE.Mesh(geometry, material);
+            
+            box.position.set(
+                (Math.random() - 0.5) * 24,
+                (Math.random() - 0.5) * 24,
+                (Math.random() - 0.5) * 12
+            );
+            
+            box.rotation.set(
                 Math.random() * Math.PI,
                 Math.random() * Math.PI,
                 Math.random() * Math.PI
             );
             
-            scene.add(mesh);
-            meshes.push(mesh);
+            box.userData = {
+                rotationSpeed: {
+                    x: (Math.random() - 0.5) * 0.025,
+                    y: (Math.random() - 0.5) * 0.025,
+                    z: (Math.random() - 0.5) * 0.025
+                }
+            };
+            
+            this.scene.add(box);
         }
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-        scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0x4a90e2, 0.8);
-        directionalLight.position.set(10, 10, 5);
-        scene.add(directionalLight);
-        
-        camera.position.z = 25;
-        
-        // Animation
-        const animate = () => {
-            meshes.forEach((mesh, index) => {
-                mesh.rotation.x += 0.01;
-                mesh.rotation.y += 0.01;
-                mesh.position.y += Math.sin(Date.now() * 0.001 + index) * 0.02;
-            });
-            
-            renderer.render(scene, camera);
-            animationId = requestAnimationFrame(animate);
-        };
-        
-        this.scenes.news = { scene, camera, renderer, animate, meshes };
-    }
-
-    createTournamentsScene() {
-        const canvas = document.getElementById('tournaments-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x2d5016);
-        
-        // Create tournament-themed scene with trophy-like objects
-        const geometries = [
-            new THREE.ConeGeometry(1, 3, 8),
-            new THREE.CylinderGeometry(0.5, 0.5, 2, 8),
-            new THREE.SphereGeometry(1, 16, 16)
-        ];
-        
-        const materials = [
-            new THREE.MeshPhongMaterial({ color: 0xffd700 }), // Gold
-            new THREE.MeshPhongMaterial({ color: 0xc0c0c0 }), // Silver
-            new THREE.MeshPhongMaterial({ color: 0xcd7f32 })  // Bronze
-        ];
-        
-        const meshes = [];
-        for (let i = 0; i < 15; i++) {
-            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-            const material = materials[Math.floor(Math.random() * materials.length)];
-            const mesh = new THREE.Mesh(geometry, material);
-            
-            mesh.position.set(
-                (Math.random() - 0.5) * 25,
-                (Math.random() - 0.5) * 25,
-                (Math.random() - 0.5) * 25
-            );
-            
-            scene.add(mesh);
-            meshes.push(mesh);
-        }
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
-        scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0xffd700, 0.8);
-        directionalLight.position.set(10, 10, 5);
-        scene.add(directionalLight);
-        
-        camera.position.z = 20;
-        
-        // Animation
-        const animate = () => {
-            meshes.forEach((mesh, index) => {
-                mesh.rotation.y += 0.02;
-                mesh.position.y += Math.sin(Date.now() * 0.001 + index) * 0.03;
-            });
-            
-            renderer.render(scene, camera);
-            animationId = requestAnimationFrame(animate);
-        };
-        
-        this.scenes.tournaments = { scene, camera, renderer, animate, meshes };
-    }
-
-    createStreamsScene() {
-        const canvas = document.getElementById('streams-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x1a1a1a);
-        
-        // Create streams-themed scene with video-like elements
-        const geometries = [
-            new THREE.PlaneGeometry(4, 2.5),
-            new THREE.BoxGeometry(3, 2, 0.2)
-        ];
-        
-        const materials = [
-            new THREE.MeshPhongMaterial({ color: 0xff4655, transparent: true, opacity: 0.7 }),
-            new THREE.MeshPhongMaterial({ color: 0x4a90e2, transparent: true, opacity: 0.7 })
-        ];
-        
-        const meshes = [];
-        for (let i = 0; i < 10; i++) {
-            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-            const material = materials[Math.floor(Math.random() * materials.length)];
-            const mesh = new THREE.Mesh(geometry, material);
-            
-            mesh.position.set(
-                (Math.random() - 0.5) * 20,
-                (Math.random() - 0.5) * 20,
-                (Math.random() - 0.5) * 20
-            );
-            
-            scene.add(mesh);
-            meshes.push(mesh);
-        }
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
-        scene.add(ambientLight);
-        
-        const pointLight = new THREE.PointLight(0xff4655, 1, 50);
-        pointLight.position.set(0, 10, 10);
-        scene.add(pointLight);
-        
-        camera.position.z = 25;
-        
-        // Animation
-        const animate = () => {
-            meshes.forEach((mesh, index) => {
-                mesh.rotation.y += 0.015;
-                mesh.position.y += Math.sin(Date.now() * 0.001 + index) * 0.02;
-            });
-            
-            renderer.render(scene, camera);
-            animationId = requestAnimationFrame(animate);
-        };
-        
-        this.scenes.streams = { scene, camera, renderer, animate, meshes };
-    }
-
-    createMerchandiseScene() {
-        const canvas = document.getElementById('merchandise-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x2c3e50);
-        
-        // Create merchandise-themed scene with product-like objects
-        const geometries = [
-            new THREE.BoxGeometry(2, 2, 2),
-            new THREE.CylinderGeometry(1, 1, 1, 8),
-            new THREE.SphereGeometry(1, 16, 16)
-        ];
-        
-        const materials = [
-            new THREE.MeshPhongMaterial({ color: 0xe74c3c }),
-            new THREE.MeshPhongMaterial({ color: 0x3498db }),
-            new THREE.MeshPhongMaterial({ color: 0x2ecc71 }),
-            new THREE.MeshPhongMaterial({ color: 0xf39c12 })
-        ];
-        
-        const meshes = [];
-        for (let i = 0; i < 18; i++) {
-            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-            const material = materials[Math.floor(Math.random() * materials.length)];
-            const mesh = new THREE.Mesh(geometry, material);
-            
-            mesh.position.set(
-                (Math.random() - 0.5) * 30,
-                (Math.random() - 0.5) * 30,
-                (Math.random() - 0.5) * 30
-            );
-            
-            scene.add(mesh);
-            meshes.push(mesh);
-        }
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
-        scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(10, 10, 5);
-        scene.add(directionalLight);
-        
-        camera.position.z = 30;
-        
-        // Animation
-        const animate = () => {
-            meshes.forEach((mesh, index) => {
-                mesh.rotation.x += 0.01;
-                mesh.rotation.y += 0.01;
-                mesh.position.y += Math.sin(Date.now() * 0.001 + index) * 0.025;
-            });
-            
-            renderer.render(scene, camera);
-            animationId = requestAnimationFrame(animate);
-        };
-        
-        this.scenes.merchandise = { scene, camera, renderer, animate, meshes };
     }
 
     createContactsScene() {
-        const canvas = document.getElementById('contacts-canvas');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        // Create contact-themed scene with blue elements
+        const colors = [0x4a90e2, 0x7b68ee, 0x5dade2, 0x3498db];
         
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x0a0a0a);
-        
-        // Create contact-themed scene with communication elements
-        const geometries = [
-            new THREE.BoxGeometry(1, 1, 1),
-            new THREE.SphereGeometry(0.8, 16, 16),
-            new THREE.TorusGeometry(0.5, 0.2, 8, 16)
-        ];
-        
-        const materials = [
-            new THREE.MeshPhongMaterial({ color: 0x4a90e2, transparent: true, opacity: 0.8 }),
-            new THREE.MeshPhongMaterial({ color: 0x7b68ee, transparent: true, opacity: 0.8 }),
-            new THREE.MeshPhongMaterial({ color: 0x50c878, transparent: true, opacity: 0.8 })
-        ];
-        
-        const meshes = [];
-        for (let i = 0; i < 40; i++) {
-            const geometry = geometries[Math.floor(Math.random() * geometries.length)];
-            const material = materials[Math.floor(Math.random() * materials.length)];
-            const mesh = new THREE.Mesh(geometry, material);
+        for (let i = 0; i < 12; i++) {
+            const geometry = new THREE.SphereGeometry(Math.random() * 0.6 + 0.3, 16, 16);
+            const material = new THREE.MeshBasicMaterial({
+                color: colors[Math.floor(Math.random() * colors.length)],
+                transparent: true,
+                opacity: 0.6
+            });
+            const sphere = new THREE.Mesh(geometry, material);
             
-            mesh.position.set(
-                (Math.random() - 0.5) * 40,
-                (Math.random() - 0.5) * 40,
-                (Math.random() - 0.5) * 40
+            sphere.position.set(
+                (Math.random() - 0.5) * 18,
+                (Math.random() - 0.5) * 18,
+                (Math.random() - 0.5) * 8
             );
             
-            scene.add(mesh);
-            meshes.push(mesh);
-        }
-        
-        // Add lighting
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
-        scene.add(ambientLight);
-        
-        const directionalLight = new THREE.DirectionalLight(0x4a90e2, 0.7);
-        directionalLight.position.set(10, 10, 5);
-        scene.add(directionalLight);
-        
-        camera.position.z = 25;
-        
-        // Animation
-        const animate = () => {
-            meshes.forEach((mesh, index) => {
-                mesh.rotation.x += 0.012;
-                mesh.rotation.y += 0.012;
-                mesh.position.y += Math.sin(Date.now() * 0.001 + index) * 0.015;
-            });
+            sphere.userData = {
+                speed: Math.random() * 0.01 + 0.005,
+                rotationSpeed: Math.random() * 0.015 + 0.005
+            };
             
-            renderer.render(scene, camera);
-            animationId = requestAnimationFrame(animate);
-        };
+            this.scene.add(sphere);
+        }
+    }
+
+    createAboutScene() {
+        // Create about-themed scene with tech elements
+        const shapes = [
+            new THREE.BoxGeometry(0.8, 0.8, 0.8),
+            new THREE.SphereGeometry(0.4, 16, 16),
+            new THREE.ConeGeometry(0.3, 0.8, 8)
+        ];
         
-        this.scenes.contacts = { scene, camera, renderer, animate, meshes };
+        const colors = [0x4a90e2, 0x7b68ee, 0x50c878, 0xffd700];
+        
+        for (let i = 0; i < 15; i++) {
+            const geometry = shapes[Math.floor(Math.random() * shapes.length)];
+            const material = new THREE.MeshBasicMaterial({
+                color: colors[Math.floor(Math.random() * colors.length)],
+                wireframe: true,
+                transparent: true,
+                opacity: 0.6
+            });
+            const shape = new THREE.Mesh(geometry, material);
+            
+            shape.position.set(
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 10
+            );
+            
+            shape.userData = {
+                rotationSpeed: {
+                    x: (Math.random() - 0.5) * 0.02,
+                    y: (Math.random() - 0.5) * 0.02,
+                    z: (Math.random() - 0.5) * 0.02
+                }
+            };
+            
+            this.scene.add(shape);
+        }
+    }
+
+    startHomeAnimation() {
+        // Start the home page animation
+        this.createHomeScene();
+        this.animate();
+    }
+
+    animate() {
+        this.animationId = requestAnimationFrame(() => this.animate());
+        
+        // Animate all objects in the scene
+        this.scene.children.forEach(child => {
+            if (child.userData.speed) {
+                child.position.y += child.userData.speed;
+                if (child.position.y > 10) {
+                    child.position.y = -10;
+                }
+            }
+            
+            if (child.userData.rotationSpeed) {
+                if (typeof child.userData.rotationSpeed === 'object') {
+                    child.rotation.x += child.userData.rotationSpeed.x;
+                    child.rotation.y += child.userData.rotationSpeed.y;
+                    child.rotation.z += child.userData.rotationSpeed.z;
+                } else {
+                    child.rotation.x += child.userData.rotationSpeed;
+                    child.rotation.y += child.userData.rotationSpeed;
+                }
+            }
+        });
+        
+        this.renderer.render(this.scene, this.camera);
     }
 
     onWindowResize() {
-        Object.values(this.scenes).forEach(sceneData => {
-            if (sceneData.camera && sceneData.renderer) {
-                sceneData.camera.aspect = window.innerWidth / window.innerHeight;
-                sceneData.camera.updateProjectionMatrix();
-                sceneData.renderer.setSize(window.innerWidth, window.innerHeight);
-            }
-        });
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 }
 

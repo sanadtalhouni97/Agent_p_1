@@ -1,7 +1,7 @@
 {
-  "name": "gaming-threejs-site",
+  "name": "gaming-universe-threejs",
   "version": "1.0.0",
-  "description": "A Three.js gaming website featuring Dota 2, CS:GO 2, and other popular games",
+  "description": "A modern, immersive Three.js website showcasing popular competitive gaming titles with stunning 3D visualizations and interactive elements. Features 14 gaming pages with unique Three.js scenes, responsive design, and proper URL routing.",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
@@ -16,7 +16,35 @@
   "devDependencies": {
     "vite": "^5.0.0"
   },
-  "keywords": ["threejs", "gaming", "dota2", "csgo", "webgl"],
-  "author": "Gaming ThreeJS",
-  "license": "MIT"
+  "keywords": [
+    "threejs",
+    "gaming",
+    "dota2",
+    "csgo",
+    "valorant",
+    "league-of-legends",
+    "fortnite",
+    "overwatch",
+    "pubg",
+    "webgl",
+    "3d-graphics",
+    "responsive-design",
+    "modern-ui",
+    "gaming-website",
+    "esports",
+    "interactive",
+    "animations",
+    "gsap",
+    "vite"
+  ],
+  "author": "Gaming Universe Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sanad-t/threejs-site.git"
+  },
+  "homepage": "https://sanad-t.github.io/threejs-site/",
+  "bugs": {
+    "url": "https://github.com/sanad-t/threejs-site/issues"
+  }
 }

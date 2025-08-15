@@ -1,213 +1,78 @@
-# Gaming Universe - ThreeJS Experience
+# 🎮 Gaming Universe - ThreeJS Experience
 
-A modern, immersive Three.js website showcasing popular competitive gaming titles with stunning 3D visualizations and interactive elements.
+[![Three.js](https://img.shields.io/badge/Three.js-3D%20Graphics-000000?style=for-the-badge&logo=three.js)](https://threejs.org/)
+[![Responsive](https://img.shields.io/badge/Responsive-Design-4CAF50?style=for-the-badge)](https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design)
+[![Modern](https://img.shields.io/badge/Modern-ES6+-FF6B6B?style=for-the-badge)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Performance](https://img.shields.io/badge/Performance-Optimized-FFD700?style=for-the-badge)](https://web.dev/performance/)
 
-## 🌐 Live Site
-**Visit the live site:** [Gaming Universe](https://sanad-t.github.io/threejs-site/)
+A modern Three.js gaming website featuring 14 interactive pages with stunning 3D visualizations. Built with cutting-edge web technologies for an exceptional gaming experience.
 
-## 🎮 Featured Games
+## 🚀 Live Demo
 
-- **Dota 2** - Multiplayer Online Battle Arena (MOBA)
-- **Counter-Strike 2** - Tactical First-Person Shooter
-- **Valorant** - Tactical Hero Shooter
-- **League of Legends** - Strategic MOBA
-- **Fortnite** - Battle Royale
-- **Overwatch 2** - Team-based FPS
-- **PUBG** - Battle Royale
-- **News** - Gaming Updates
-- **Tournaments** - Esports Events
-- **Streams** - Live Gaming
-- **Merchandise** - Gaming Gear
+**[View Live Site](https://sanad-t.github.io/threejs-site/)**
 
-## ✨ Features
+## ✨ Key Features
 
-- **Interactive 3D Scenes** - Each game page features unique Three.js visualizations
-- **Responsive Design** - Optimized for desktop and mobile devices
+- **14 Gaming Pages** - Dota 2, CS:GO 2, Valorant, League of Legends, Fortnite, Overwatch, PUBG
+- **Interactive 3D Scenes** - Unique Three.js visualizations for each game
+- **Responsive Design** - Optimized for desktop, tablet, and mobile
 - **Smooth Animations** - GSAP-powered transitions and effects
-- **Professional UI** - Minimal, eye-friendly design with subdued colors
-- **Modern Navigation** - Smooth page transitions with active state indicators
-- **Loading Screen** - Engaging loading experience with progress animation
-- **Proper URL Routing** - Clean URLs for each page (e.g., `/dota2`, `/news`)
+- **Clean URLs** - Proper routing with distinct page URLs
+- **Professional UI** - Minimal, eye-friendly dark theme
 
-## 🛠️ Technologies Used
+## 🛠️ Technologies
 
 - **Three.js** - 3D graphics and WebGL rendering
 - **GSAP** - Advanced animations and transitions
-- **Vite** - Fast development server and build tool
-- **Modern CSS** - Grid, Flexbox, and CSS animations
-- **ES6+ JavaScript** - Modern JavaScript features and modules
+- **Vite** - Fast development and build tool
+- **ES6+** - Modern JavaScript features
+- **CSS3** - Responsive design and animations
 
-## 🚀 Getting Started
+## 🎯 Gaming Pages
 
-### Prerequisites
+- **Home** - Landing page with gaming statistics
+- **Games** - Dota 2, CS:GO 2, Valorant, League of Legends, Fortnite, Overwatch, PUBG
+- **Community** - News, Tournaments, Streams, Merchandise
+- **Info** - About, Contacts
 
-- Node.js (version 14 or higher)
-- npm or yarn package manager
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/sanad-t/threejs-site.git
-   cd threejs-site
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server**
-   ```bash
-   npm run dev
-   ```
-
-4. **Open your browser**
-   - The application will automatically open at `http://localhost:3000`
-   - If it doesn't open automatically, manually navigate to the URL
-
-### Build for Production
-
-```bash
-npm run build
-```
-
-The built files will be in the `dist` directory.
-
-## 📁 Project Structure
-
-```
-threejs-site/
-├── index.html              # Main HTML file
-├── package.json            # Dependencies and scripts
-├── vite.config.js          # Vite configuration
-├── README.md              # Project documentation
-├── styles/
-│   └── main.css           # Main stylesheet
-└── js/
-    ├── main.js            # Main JavaScript with Three.js scenes
-    └── router.js          # URL routing system
-```
-
-## 🎨 Design Features
-
-- **Color Palette**: Subdued blues and grays to reduce eye strain
-- **Typography**: Orbitron for headings, Rajdhani for body text
-- **Layout**: Full-screen pages with overlay content
-- **Animations**: Smooth transitions and hover effects
-- **Responsive**: Mobile-first design approach
-
-## 🎯 Game Pages
-
-### Home Page
-- Floating 3D spheres representing gaming elements
-- Hero section with call-to-action buttons
-- Smooth particle animations
-
-### Dota 2 Page
-- Red-themed particle system
-- Game statistics and hero showcase
-- Interactive hero cards
-
-### CS:GO 2 Page
-- Geometric shapes representing tactical gameplay
-- Weapon showcase with hover effects
-- Military-themed color scheme
-
-### Valorant Page
-- Neon wireframe effects
-- Agent showcase with abilities
-- Futuristic design elements
-
-### League of Legends Page
-- Magical torus and floating orbs
-- Champion showcase
-- Gold-themed color scheme
-
-### Additional Pages
-- **Fortnite**: Colorful battle royale scene
-- **Overwatch 2**: Futuristic hero shooter elements
-- **PUBG**: Military-themed battle royale
-- **News**: Gaming news and updates
-- **Tournaments**: Major esports events
-- **Streams**: Live streaming information
-- **Merchandise**: Gaming merchandise store
-- **About**: Technology showcase
-- **Contacts**: Contact form and information
-
-## 🎮 Interactive Elements
-
-- **Navigation**: Smooth page transitions with proper URL routing
-- **Buttons**: Hover effects and animations
-- **Cards**: Interactive game/hero/weapon cards
-- **Mobile Menu**: Responsive hamburger menu
-- **Loading Screen**: Animated progress bar
-
-## 🔧 Customization
-
-### Adding New Games
-1. Add a new section in `index.html`
-2. Create a new scene method in `js/main.js`
-3. Add navigation link
-4. Update styles in `styles/main.css`
-
-### Modifying Colors
-The main color variables are:
-- Primary: `#4a90e2` (Blue)
-- Secondary: `#7b68ee` (Purple)
-- Background: `#0a0a0a` (Dark)
-- Text: `#e0e0e0` (Light)
-
-### Changing Animations
-- Modify animation speeds in the `animate()` functions
-- Adjust GSAP animations in the main.js file
-- Update CSS transitions in main.css
-
-## 🌐 Browser Support
-
-- Chrome (recommended)
-- Firefox
-- Safari
-- Edge
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
-## 📱 Mobile Optimization
+## 📱 Mobile Optimized
 
 - Responsive navigation with hamburger menu
 - Touch-friendly interactions
-- Optimized 3D performance
-- Adaptive layouts for different screen sizes
+- Optimized performance for mobile devices
+- Smooth scrolling and animations
 
-## 🚀 Performance Tips
+## 🚀 Quick Start
 
-- The application uses efficient Three.js rendering
-- GSAP animations are hardware-accelerated
-- Images and assets are optimized
-- Lazy loading for better performance
+```bash
+# Clone the repository
+git clone https://github.com/sanadtalhouni97/threejs-site.git
 
-## 🤝 Contributing
+# Install dependencies
+npm install
 
-Feel free to contribute to this project by:
-- Adding new game pages
-- Improving animations
-- Enhancing mobile experience
-- Adding new interactive features
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+```
 
 ## 📄 License
 
-This project is open source and available under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🎯 Future Enhancements
+## 🤝 Contributing
 
-- Add more games and scenes
-- Implement 3D models for characters/weapons
-- Add sound effects and background music
-- Create interactive 3D environments
-- Add multiplayer features
-- Implement game statistics API integration
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📞 Support
+
+- **Repository**: [https://github.com/sanadtalhouni97/threejs-site](https://github.com/sanadtalhouni97/threejs-site)
+- **Issues**: [https://github.com/sanadtalhouni97/threejs-site/issues](https://github.com/sanadtalhouni97/threejs-site/issues)
 
 ---
 
-**Enjoy exploring the Gaming Universe! 🎮✨**
+⭐ **Star this repository if you found it helpful!**
 
-**Live Site:** [https://sanad-t.github.io/threejs-site/](https://sanad-t.github.io/threejs-site/)
+Built with ❤️ using Three.js, GSAP, and modern web technologies.

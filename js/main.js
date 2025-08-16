@@ -1,6 +1,5 @@
-import * as THREE from 'three';
-import { gsap } from 'gsap';
-import Router from './router.js';
+// Use global variables from CDN imports
+// THREE, gsap, and Router are now available globally
 
 class GamingUniverse {
     constructor() {

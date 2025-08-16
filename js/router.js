@@ -85,4 +85,4 @@ class Router {
     }
 }
 
-export default Router;
+// Router class is now available globally
